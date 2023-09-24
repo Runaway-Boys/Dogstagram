@@ -5,9 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+
     <title>Dogstagram</title>
 </head>
 <body>
+<header>
+    <div class="header_inner">
+        <form action="/search" method="POST">
+        {% csrf_token %}
+            <div class="left-side">
+                <!-- Logo -->
+                <div id="logo" class=" heading">
+                    <a href="home.html">
+                        <b><h1 style="text-transform: uppercase;">Dogstagram</h1></b>
+                    </a>
+                </div>
+        </div>
+        </form>
+    
+               
+                            <!-- notification contents -->
+                            <div class="flex justify-center flex-center text-center">
+    
+                                    <form action="upload" method="POST" enctype="multipart/form-data" >
+                                    {% csrf_token %}
+                                    <p class="my-3 leading-6"> Upload pics
+                                    </p>
+                                    <div>
+                                        <label for="formFileMultiple" class="form-label">Multiple files input example</label>
+                                        <input class="form-control" type="file" id="formFileMultiple" multiple />
+
+                                        
+                                        <!-- <a href="#" class="button soft-warning small"> Choose file</a> -->
+                                        <textarea class="button soft-warning small" name="caption" placeholder="caption..." ></textarea>
+                                        <br>
+                                        <button class="button bg-blue-700" type="submit" >Upload</button>
+                                 
+                                    </form>
+
+                                </div>
+
+
+</header>
+
+
+
+
 </body>
 
 
