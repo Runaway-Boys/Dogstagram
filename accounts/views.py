@@ -2,6 +2,8 @@ from django.contrib.auth import  login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+import pandas as pd
+import csv
 # Create your views here.
 
 def register_view(request):
@@ -22,6 +24,11 @@ def index(request):
 def upload(request):
     return render (request,'accounts/upload.html')
 
+def read_csv(request):
+    data = pd.read_csv('static/fci-breeds.csv')
+    specific_column=data["name"]
+    context = {'loaded_data': specific_column}
+    return render(request, "accounts/register.html", context)
 # #@login_required()
 # def upload(request):
 
