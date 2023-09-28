@@ -19,7 +19,8 @@ def login_view(request):
 def index(request):
     return render (request,'index.html')
 
-
+def upload(request):
+    return render (request,'accounts/upload.html')
 
 # #@login_required()
 # def upload(request):
