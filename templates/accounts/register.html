@@ -20,6 +20,7 @@
       
                       <form class="mx-1 mx-md-4">
                         {% csrf_token %}
+                        
                         <div class="d-flex flex-row align-items-center mb-4">
                           <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                           <div class="form-outline flex-fill mb-0">
@@ -56,21 +57,6 @@
                             </select>
 
                             <label class="form-label" for="form3Example1c">Dog Breed</label>
-                            <!--
-
-                                Not Working yet
-
-                            <select class="form-select" id="inputGroupSelect01">
-                              <option selected>Dog Breeds</option>
-                                {% for x in loaded_data %}
-                                   <option value="{{ x }}">
-                                          {{ x }}
-                                   </option>
-                                {% endfor %}
-                             </select>
-
-
-                            -->
                           </div>
                         </div>
       
