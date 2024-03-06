@@ -7,7 +7,7 @@ import csv
 # Create your views here.
 
 def register_view(request):
-    form = UserCreationForm(request.POST or None)
+    form = UserCreationForm(request.POST)
     if form.is_valid():
         return redirect('/login')
     context = {"form": form}
