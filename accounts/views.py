@@ -9,19 +9,15 @@ import pandas as pd
 import csv
 # Create your views here.
 #creating a signup view page
-class SignupView(CreateView):
-    model = DogAccount
-    form_class = SignupForm
-    success_url = "accounts/login.html"
-    template_name = "accounts/register.html"
 
-#removing reg view
-# def register_view(request):
-#     form = UserCreationForm(request.POST)
-#     if form.is_valid():
-#         return redirect('/login')
-#     context = {"form": form}
-#     return render(request, "accounts/register.html", context)
+
+
+def register_view(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        return redirect('/login')
+    context = {"form": form}
+    return render(request, "accounts/register.html", context)
 
 
 def login_view(request):
