@@ -55,7 +55,7 @@ class DogAccount(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     hide_email = models.BooleanField(default = True)
 
-    objects = AccountManager
+    objects = AccountManager()
 
     USERNAME_FIELD = "email" 
     REQUIRED_FIELDS = ['username']
