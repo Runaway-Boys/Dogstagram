@@ -2,7 +2,7 @@ from django.contrib.auth import  login, logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from accounts.forms import SignupForm
+from accounts.forms import SignupForm,AccountAuthenticateForm
 
 
 import pandas as pd
@@ -25,7 +25,7 @@ def register_view(request,*args,**kwargs):
             raw_password = form.cleaned_data.get('password1')
             dog_account = authenticate(email=email,password = raw_password)
             login(request,dog_account)
-            destination = kwargs.get("next")
+            destination = get_redirect_if_exist(request)
             if destination:
                 return redirect(destination)
             return redirect("index")
@@ -33,9 +33,34 @@ def register_view(request,*args,**kwargs):
             context['signup_form'] = form
     return render(request, "accounts/register.html", context)
 
+def logout_view(request):
+    logout(request)
+    return redirect("index")
 
-def login_view(request):
-    return render (request,'accounts/login.html')
+
+
+def login_view(request,*args,**kwargs):
+    context={}
+    user = request.user
+    if user.is_authenticated:
+        return redirect('index')
+    
+
+    if request.POST:
+        form = AccountAuthenticateForm(request.POST)
+        if form.is_valid():
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(email=email,password=password)
+            if user:
+                login(request,user)
+                destination = get_redirect_if_exist(request)
+                if destination:
+                    return redirect(destination)
+                return redirect('index')
+    else:
+        context['login_form'] = form   
+    return render (request,'accounts/login.html',context)
 
 
 def index(request):
@@ -49,6 +74,17 @@ def read_csv(request):
     specific_column=data["name"]
     context = {'loaded_data': specific_column}
     return render(request, "accounts/register.html", context)
+
+
+def get_redirect_if_exist(request):
+    redirect= None
+    if request.GET:
+        if request.GET.get("next") :
+            redirect (str(request.GET.get("next")))
+    return redirect
+
+
+
 # #@login_required()
 # def upload(request):
 

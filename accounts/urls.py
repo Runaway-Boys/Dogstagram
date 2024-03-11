@@ -5,9 +5,9 @@ from django.conf.urls.static import static
 from .views import (
     register_view,
     login_view,
-    index,
+    logout_view,
     upload,
-    
+    index
     
     )
 
@@ -16,9 +16,10 @@ from .views import (
 
 app_name='accounts'
 urlpatterns = [
-    path("",index,name = 'index'),
+    path("",index ,name = 'index'),
     path("register/",register_view,name = 'register'),
     path("login/",login_view,name = 'login'),
+        path("logout/",logout_view,name = 'logout'),
     path("upload/",upload,name = 'upload'),
 ]
 

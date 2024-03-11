@@ -15,25 +15,37 @@
 
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4" style = "color:#f4d288;">Log In</p>
 
-                <form class="mx-1 mx-md-4">
+                <form class="form-signin">{%csrf_token%}
         
          
             
 
             <!-- Email input -->
             <div class="form-outline mb-4">
-              <input type="email" id="form3Example3" class="form-control form-control-lg"
+              <input type="email" name = "email"id="inputEmail" class="form-control form-control-lg"
                 placeholder="Enter a valid email address" />
-              <label class="form-label" for="form3Example3">Email address</label>
+              <label class="form-label" for="email">Email address</label>
             </div>
   
             <!-- Password input -->
             <div class="form-outline mb-3">
-              <input type="password" id="form3Example4" class="form-control form-control-lg"
+              <input type="password" name = "password"id="inputPassword" class="form-control form-control-lg"
                 placeholder="Enter password" />
-              <label class="form-label" for="form3Example4">Password</label>
+              <label class="form-label" for="password">Password</label>
             </div>
-  
+            {% for fields in login_form%}
+            <p>
+              {%for error in fields.errors%}
+              {{error}}
+              {%endfor%}
+            </p>
+              {%endfor%}
+              {%if login_form.non_field_error%}
+              <p>
+                {{login_form.non_field_error}}
+              </p>
+              {%endif%}
+              
   
             <div class="text-center text-lg-start mt-4 pt-2">
               <button type="button" class="btn btn-primary btn-lg"
