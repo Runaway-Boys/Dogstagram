@@ -37,7 +37,7 @@ def get_profile_image_filepath(self,filename):
     return f'profile_images/{self.pk}/{"profile_image.png"}'
 
 def get_default_profile_image():
-    return "images/default-dog-profile.png"
+    return "medias/default-dog-profile.png"
 
 
 class DogAccount(AbstractBaseUser):
@@ -45,7 +45,7 @@ class DogAccount(AbstractBaseUser):
     username = models.CharField(max_length=30,unique=True,null = True)
     bio = models.TextField(max_length=255,blank=True)
     date_joined = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
-    profile_image = models.ImageField(max_length=255,upload_to=get_profile_image_filepath, default= get_default_profile_image)
+    profile_image = models.ImageField(max_length=255,blank = True,null =True,upload_to=get_profile_image_filepath, default= get_default_profile_image)
     location = models.CharField(max_length=100, blank=True)
     
     
