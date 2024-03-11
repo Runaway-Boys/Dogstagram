@@ -18,7 +18,7 @@ def register_view(request,*args,**kwargs):
         return HttpResponse(f'you are already autheticated as {user.email}')
     context = {}
     if request.POST:
-        form = SignupForm(request.Post)
+        form = SignupForm(request.POST)
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email').lower()

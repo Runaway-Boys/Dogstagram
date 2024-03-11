@@ -10,7 +10,7 @@ class SignupForm(UserCreationForm):
         fields = ['email','username','password1','password2']
 
     def clean_email(self):
-        email = self.changed_data['email'].lower()
+        email = self.cleaned_data['email'].lower()
         try:
             account = DogAccount.objects.get(email=email)
         except Exception as e:
@@ -19,7 +19,7 @@ class SignupForm(UserCreationForm):
         raise forms.ValidationError(f'Email{email} is already in use')
 
     def clean_username(self):
-            username = self.changed_data['username']
+            username = self.cleaned_data['username']
             try:
                 account = DogAccount.objects.get(username=username)
             except Exception as e:

@@ -60,8 +60,17 @@
                             
                           </div>
                         </div>
-      
+                        {%for fields in signup_form%}
+                        <p>
+                          {%for error in fields.errors%}
+                          {{error}}
+                          {%endfor%}
+                          <p>
+                          {%endfor%}
 
+                          {%if signup_form.non_field_errors%}
+                          {{signup_form.non_field_errors}}
+                          {%endif%}
       
                         
       
