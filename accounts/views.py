@@ -58,8 +58,8 @@ def login_view(request,*args,**kwargs):
                 if destination:
                     return redirect(destination)
                 return redirect('index')
-    else:
-        context['login_form'] = form   
+        else:
+            context['login_form'] = form   
     return render (request,'accounts/login.html',context)
 
 

@@ -15,7 +15,7 @@
 
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4" style = "color:#f4d288;">Log In</p>
 
-                <form class="form-signin">{%csrf_token%}
+                <form class="form-signin" method = "post">{%csrf_token%}
         
          
             
@@ -36,20 +36,22 @@
             {% for fields in login_form%}
             <p>
               {%for error in fields.errors%}
-              {{error}}
+              <p style = "color:red">{{error}}</p>
               {%endfor%}
             </p>
               {%endfor%}
               {%if login_form.non_field_error%}
               <p>
-                {{login_form.non_field_error}}
+                <div style="color:red"><p>{{login_form.non_field_error}}</p></div>
               </p>
               {%endif%}
               
   
             <div class="text-center text-lg-start mt-4 pt-2">
-              <button type="button" class="btn btn-primary btn-lg"
+              <button type="submit" class="btn btn-primary btn-lg"
                 style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                <p class="small fw-bold mt-2 pt-1 mb-0">reset password? <a href="{%url 'password_reset'%}"
+                  class="link-danger">reset</a></p>
               <p class="small fw-bold mt-2 pt-1 mb-0">Don't have an account? <a href="#"
                   class="link-danger">Register</a></p>
             </div>
