@@ -165,8 +165,9 @@ def edit_account_view(request,*args,**kwargs):
 				}
 			)
 		context['form'] = form
+          #set limits to the size of the image upload
 	context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
-	return render(request, "account/edit_account.html", context)     
+	return render(request, "accounts/edit_account.html", context)     
      
 # #@login_required()
 # def upload(request):
