@@ -32,11 +32,13 @@ class AccountManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user 
+    
+
 def get_profile_image_filepath(self,filename):
     return f'profile_images/{self.pk}/{"profile_image.png"}'
 
 def get_default_profile_image():
-    return "medias/default-dog-profile.png"
+    return "images/default-dog-profile.png"
 
 
 class DogAccount(AbstractBaseUser):

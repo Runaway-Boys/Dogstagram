@@ -3,7 +3,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
-from accounts.forms import SignupForm,AccountAuthenticateForm
+from accounts.forms import AccountUpdateForm,SignupForm,AccountAuthenticateForm
 from accounts.models import DogAccount
 
 import pandas as pd
@@ -85,27 +85,30 @@ def get_redirect_if_exist(request):
     return redirect
 
 def account_view(request,*args,**kwargs):
-    context={}
+    
+    context = {}
     user_id = kwargs.get("user_id")
     try:
         account = DogAccount.objects.get(pk=user_id)
-    except DogAccount.DoesNotExist:
-        return HttpResponse("Account Doesnt Exist")
+    except:
+        return HttpResponse("Something went wrong.")
     if account:
         context['id'] = account.id
         context['username'] = account.username
         context['email'] = account.email
         context['profile_image'] = account.profile_image.url
         context['hide_email'] = account.hide_email
-    #state variables
-        is_self=True
+
+        # Define template variables
+        is_self = True
         is_friend = False
         user = request.user
         if user.is_authenticated and user != account:
             is_self = False
         elif not user.is_authenticated:
-            is_self=False
-        
+            is_self = False
+            
+        # Set the template variables to the values
         context['is_self'] = is_self
         context['is_friend'] = is_friend
         context['BASE_URL'] = settings.BASE_URL
@@ -126,7 +129,45 @@ def account_search_view(request, *args, **kwargs):
 				
 	return render(request, "accounts/search_results.html", context)
             
-
+def edit_account_view(request,*args,**kwargs):
+	if not request.user.is_authenticated:
+		return redirect("login")
+	user_id = kwargs.get("user_id")
+	account = DogAccount.objects.get(pk=user_id)
+	if account.pk != request.user.pk:
+		return HttpResponse("You cannot edit someone elses profile.")
+	context = {}
+	if request.POST:
+		form = AccountUpdateForm(request.POST, request.FILES, instance=request.user)
+		if form.is_valid():
+			form.save()
+			new_username = form.cleaned_data['username']
+			return redirect("accounts:view", user_id=account.pk)
+		else:
+			form = AccountUpdateForm(request.POST, instance=request.user,
+				initial={
+					"id": account.pk,
+					"email": account.email, 
+					"username": account.username,
+					"profile_image": account.profile_image,
+					"hide_email": account.hide_email,
+				}
+			)
+			context['form'] = form
+	else:
+		form = AccountUpdateForm(
+			initial={
+					"id": account.pk,
+					"email": account.email, 
+					"username": account.username,
+					"profile_image": account.profile_image,
+					"hide_email": account.hide_email,
+				}
+			)
+		context['form'] = form
+	context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+	return render(request, "account/edit_account.html", context)     
+     
 # #@login_required()
 # def upload(request):
 
