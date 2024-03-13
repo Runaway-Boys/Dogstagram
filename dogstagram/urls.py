@@ -15,9 +15,10 @@ from accounts.views import (
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+
     path('',  index,name="index"),
-   
+    path('account/',include('accounts.urls',namespace='accounts')),
+    path('admin/', admin.site.urls),   
     path("login/",login_view,name = 'login'),
     path("logout/",logout_view,name = 'logout'),
     path("register/",register_view,name = 'register'),

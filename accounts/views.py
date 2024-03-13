@@ -2,8 +2,9 @@ from django.contrib.auth import  login, logout,authenticate
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.conf import settings
 from accounts.forms import SignupForm,AccountAuthenticateForm
-
+from accounts.models import DogAccount
 
 import pandas as pd
 import csv
@@ -83,7 +84,33 @@ def get_redirect_if_exist(request):
             redirect (str(request.GET.get("next")))
     return redirect
 
+def account_view(request,*args,**kwargs):
+    context={}
+    user_id = kwargs.get("user_id")
+    try:
+        account = DogAccount.objects.get(pk=user_id)
+    except DogAccount.DoesNotExist:
+        return HttpResponse("Account Doesnt Exist")
+    if account:
+        context['id'] = account.id
+        context['username'] = account.username
+        context['email'] = account.email
+        context['profile_image'] = account.profile_image.url
+        context['hide_email'] = account.hide_email
+    #state variables
+        is_self=True
+        is_friend = False
+        user = request.user
+        if user.is_authenticated and user != account:
+            is_self = False
+        elif not user.is_authenticated:
+            is_self=False
+        
+        context['is_self'] = is_self
+        context['is_friend'] = is_friend
+        context['BASE_URL'] = settings.BASE_URL
 
+        return render(request,"accounts/account.html",context)
 
 # #@login_required()
 # def upload(request):

@@ -10,11 +10,14 @@
     <title>Dogstagram</title>
 </head>
 <body>
-
-
-
-hrllo
-
+    <nav class="navbar navbar-light bg-light">
+        <div class="container">
+          <a class="navbar-brand" href="#">
+            <img src="{% static 'images/Dog-logo.png'%}" alt="" width="30" height="24">
+          </a>
+          <a href = "{%url 'accounts:view' user_id=request.user.id %}">Account</a>
+        </div>
+      </nav>
 </body>
 
 
