@@ -54,9 +54,9 @@
                                 </div>
     
                                 <div class="btn-group dropleft">
-                                    <img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/default-dog-profile.png' %}" alt="error" width="40" height="40">
+                                    <a href = "{%url 'accounts:view' user_id=request.user.id%}"><img class="account-image rounded-circle m-auto d-block dropdown-toggle" id="id_profile_links" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/default-dog-profile.png' %}" alt="error" width="40" height="40"></a>
                                     <div class="dropdown-menu" aria-labelledby="id_profile_links">
-                                        <a class="dropdown-item" href="#">Account</a>
+                                        <a class="dropdown-item" href="{%url 'accounts:view' user_id=request.user.id%}">Account</a>
                                         <a class="dropdown-item" href="#">Logout</a>
                                     </div>
                                 </div>
