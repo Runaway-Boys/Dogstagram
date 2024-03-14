@@ -3,7 +3,8 @@ v class="container">
 {% load static %}
 
 {% block content %}	
-<div class="card p-2">
+<div class="container">
+	<div class="card p-2">
 
 		{% if accounts %}
 		<div class="d-flex flex-row flex-wrap">
@@ -11,7 +12,7 @@ v class="container">
 		<div class="card flex-row flex-grow-1 p-2 mx-2 my-2 align-items-center">
 			<a class="profile-link" href="{% url 'accounts:view' user_id=account.0.id %}">
 				<div class="card-image m-2">
-					<img class="img-fluid profile_images" src="{{account.0.profile_image.url}}" alt="not here">
+					<img class="img-fluid profile-image" src="{{account.0.profile_image.url}}" alt="">
 				</div>
 			</a>
 			<a class="profile-link" href="{% url 'accounts:view' user_id=account.0.id %}">
@@ -70,6 +71,7 @@ v class="container">
 	</div>
 	
 </div>
+
 
 
 {#%  include 'chat/create_or_return_private_chat.html' %#}

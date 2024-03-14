@@ -3,11 +3,22 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
+from django.core.files.storage import default_storage,FileSystemStorage
+import os
+import cv2
+import json
+import base64
+#import requests
+from django.core import files
+
 from accounts.forms import AccountUpdateForm,SignupForm,AccountAuthenticateForm
 from accounts.models import DogAccount
 
 import pandas as pd
-import csv
+
+TEMP_PROFILE_IMAGE_NAME ="temp_profile_image.png"
+
+
 # Create your views here.
 #creating a signup view page
 
@@ -168,17 +179,65 @@ def edit_account_view(request,*args,**kwargs):
 	context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
 	return render(request, "accounts/edit_account.html", context)     
      
-# #@login_required()
-# def upload(request):
+#
+def save_temp_profile_image_from_base64String(imageString, user):
+	INCORRECT_PADDING_EXCEPTION = "Incorrect padding"
+	try:
+		if not os.path.exists(settings.TEMP):
+			os.mkdir(settings.TEMP)
+		if not os.path.exists(settings.TEMP + "/" + str(user.pk)):
+			os.mkdir(settings.TEMP + "/" + str(user.pk))
+		url = os.path.join(settings.TEMP + "/" + str(user.pk),TEMP_PROFILE_IMAGE_NAME)
+		storage = FileSystemStorage(location=url)
+		image = base64.b64decode(imageString)
+		with storage.open('', 'wb+') as destination:
+			destination.write(image)
+			destination.close()
+		return url
+	except Exception as e:
+		print("exception: " + str(e))
+		# workaround for an issue I found
+		if str(e) == INCORRECT_PADDING_EXCEPTION:
+			imageString += "=" * ((4 - len(imageString) % 4) % 4)
+			return save_temp_profile_image_from_base64String(imageString, user)
+	return None
 
-#     if request.method == 'POST':
-#         user = request.user.username
-#         image = request.FILES.get('image_upload')
-#         caption = request.POST['caption']
+def crop_image(request, *args, **kwargs):
+	payload = {}
+	user = request.user
+	if request.POST and user.is_authenticated:
+		try:
+			imageString = request.POST.get("image")
+			url = save_temp_profile_image_from_base64String(imageString, user)
+			img = cv2.imread(url)
 
-#         new_post = Post.objects.create(user=user, image=image, caption=caption)
-#         new_post.save()
+			cropX = int(float(str(request.POST.get("cropX"))))
+			cropY = int(float(str(request.POST.get("cropY"))))
+			cropWidth = int(float(str(request.POST.get("cropWidth"))))
+			cropHeight = int(float(str(request.POST.get("cropHeight"))))
+			if cropX < 0:
+				cropX = 0
+			if cropY < 0: # There is a bug with cropperjs. y can be negative.
+				cropY = 0
+			crop_img = img[cropY:cropY+cropHeight, cropX:cropX+cropWidth]
 
-#         return redirect('/')
-#     else:
-#         return redirect('/')
+			cv2.imwrite(url, crop_img)
+
+			# delete the old image
+			user.profile_image.delete()
+
+			# Save the cropped image to user model
+			user.profile_image.save("profile_image.png", files.File(open(url, 'rb')))
+			user.save()
+
+			payload['result'] = "success"
+			payload['cropped_profile_image'] = user.profile_image.url
+
+			# delete temp file
+			os.remove(url)
+			
+		except Exception as e:
+			print("exception: " + str(e))
+			payload['result'] = "error"
+			payload['exception'] = str(e)
+	return HttpResponse(json.dumps(payload), content_type="application/json")
