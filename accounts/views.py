@@ -4,16 +4,19 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.files.storage import default_storage,FileSystemStorage
+from django.core import files
+
 import os
 import cv2
 import json
 import base64
 #import requests
-from django.core import files
-
+import joblib
+import numpy as np 
 from accounts.forms import AccountUpdateForm,SignupForm,AccountAuthenticateForm
 from accounts.models import DogAccount
-
+#import keras
+#import tensorflow
 import pandas as pd
 
 TEMP_PROFILE_IMAGE_NAME ="temp_profile_image.png"
@@ -177,8 +180,8 @@ def edit_account_view(request,*args,**kwargs):
           #set limits to the size of the image upload
 	context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
 	return render(request, "accounts/edit_account.html", context)     
-     
-#
+
+
 def save_temp_profile_image_from_base64String(imageString, user):
 	INCORRECT_PADDING_EXCEPTION = "Incorrect padding"
 	try:
@@ -188,7 +191,24 @@ def save_temp_profile_image_from_base64String(imageString, user):
 			os.mkdir(settings.TEMP + "/" + str(user.pk))
 		url = os.path.join(settings.TEMP + "/" + str(user.pk),TEMP_PROFILE_IMAGE_NAME)
 		storage = FileSystemStorage(location=url)
+		# model = joblib.load("dog_classifier.pkl")     
+
+
+		# img = imageString
+		# img = np.array(img)
+		# img = img / 255.0 # normalize the image
+		# img = img.reshape(1, 128, 128, 3) # reshape for prediction
+		# pred = model.predict(img)
+		# if pred[0] > 0.5:
+		# 	label = 'Dog'
+		# else:
+		# 	label = 'Cat'
+		# print(label)
+            
+
+
 		image = base64.b64decode(imageString)
+		
 		with storage.open('', 'wb+') as destination:
 			destination.write(image)
 			destination.close()
