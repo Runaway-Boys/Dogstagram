@@ -132,7 +132,6 @@ def account_search_view(request, *args, **kwargs):
 		search_query = request.GET.get("q")
 		if len(search_query) > 0:
 			search_results = DogAccount.objects.filter(email__icontains=search_query).filter(username__icontains=search_query).distinct()
-			user = request.user
 			accounts = [] # [(account1, True), (account2, False), ...]
 			for account in search_results:
 				accounts.append((account, False)) # you have no friends yet
