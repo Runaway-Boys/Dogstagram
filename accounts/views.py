@@ -1,5 +1,4 @@
 from django.contrib.auth import  login, logout,authenticate
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
@@ -10,16 +9,22 @@ import os
 import cv2
 import json
 import base64
-#import requests
-import joblib
-import numpy as np 
+from joblib import load
+import tensorflow as tf
 from accounts.forms import AccountUpdateForm,SignupForm,AccountAuthenticateForm
 from accounts.models import DogAccount
-#import keras
-#import tensorflow
+import warnings
+from keras.preprocessing.image import load_img
+import numpy as np
+from django.contrib import messages
+warnings.filterwarnings('ignore')
 import pandas as pd
 
 TEMP_PROFILE_IMAGE_NAME ="temp_profile_image.png"
+import tensorflow as tf
+from tensorflow import keras
+# Recreate the exact same model, including its weights and the optimizer
+new_model = tf.keras.models.load_model('models/Dog-Model.h5')
 
 
 # Create your views here.
@@ -153,6 +158,7 @@ def edit_account_view(request,*args,**kwargs):
 	if request.POST:
 		form = AccountUpdateForm(request.POST, request.FILES, instance=request.user)
 		if form.is_valid():
+                  
 			form.save()
 			return redirect("accounts:view", user_id=account.pk)
 		else:
@@ -183,6 +189,7 @@ def edit_account_view(request,*args,**kwargs):
 
 
 def save_temp_profile_image_from_base64String(imageString, user):
+
 	INCORRECT_PADDING_EXCEPTION = "Incorrect padding"
 	try:
 		if not os.path.exists(settings.TEMP):
@@ -190,23 +197,9 @@ def save_temp_profile_image_from_base64String(imageString, user):
 		if not os.path.exists(settings.TEMP + "/" + str(user.pk)):
 			os.mkdir(settings.TEMP + "/" + str(user.pk))
 		url = os.path.join(settings.TEMP + "/" + str(user.pk),TEMP_PROFILE_IMAGE_NAME)
-		storage = FileSystemStorage(location=url)
-		# model = joblib.load("dog_classifier.pkl")     
+		storage = FileSystemStorage(location=url)    
 
-
-		# img = imageString
-		# img = np.array(img)
-		# img = img / 255.0 # normalize the image
-		# img = img.reshape(1, 128, 128, 3) # reshape for prediction
-		# pred = model.predict(img)
-		# if pred[0] > 0.5:
-		# 	label = 'Dog'
-		# else:
-		# 	label = 'Cat'
-		# print(label)
             
-
-
 		image = base64.b64decode(imageString)
 		
 		with storage.open('', 'wb+') as destination:
@@ -227,8 +220,10 @@ def crop_image(request, *args, **kwargs):
 	if request.POST and user.is_authenticated:
 		try:
 			imageString = request.POST.get("image")
+			
 			url = save_temp_profile_image_from_base64String(imageString, user)
 			img = cv2.imread(url)
+			
 
 			cropX = int(float(str(request.POST.get("cropX"))))
 			cropY = int(float(str(request.POST.get("cropY"))))
@@ -242,18 +237,53 @@ def crop_image(request, *args, **kwargs):
 
 			cv2.imwrite(url, crop_img)
 
-			# delete the old image
-			user.profile_image.delete()
+			
+			
 
-			# Save the cropped image to user model
-			user.profile_image.save("profile_image.png", files.File(open(url, 'rb')))
-			user.save()
+			
+			
+			#model that determines if the pic is a dog
+			save = url
+			img = load_img(save, target_size=(128, 128))
+			img = np.array(img)
+			img = img / 255.0 # normalize the image
+			img = img.reshape(1, 128, 128, 3) # reshape for prediction
+			pred = new_model.predict(img)
+                  #if dog
+			if pred[0] > 0.5:
+                        # delete the old image
+				print("dog")
+				user.profile_image.delete()
+                        # Save the cropped image to user model
+				user.profile_image.save("profile_image.png", files.File(open(url, 'rb')))
+				user.save()
 
-			payload['result'] = "success"
-			payload['cropped_profile_image'] = user.profile_image.url
+				payload['result'] = "success"
+				payload['cropped_profile_image'] = user.profile_image.url
 
-			# delete temp file
-			os.remove(url)
+				# delete temp file
+				os.remove(url)
+				#if not dog
+			else:
+				print("not Dog")
+				messages.info(request, 'Hey Thats Not a Dog!!!')
+					
+                        # Save the cropped image to user model
+				
+				user.save()
+
+				payload['result'] = "success"
+				payload['cropped_profile_image'] = user.profile_image.url
+
+				# delete temp file
+				os.remove(url)        				
+			# user.save()
+
+			# payload['result'] = "success"
+			# payload['cropped_profile_image'] = user.profile_image.url
+
+			# # delete temp file
+			# os.remove(url)
 			
 		except Exception as e:
 			print("exception: " + str(e))
