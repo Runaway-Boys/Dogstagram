@@ -5,9 +5,9 @@ from django.utils import timezone
 
 class FriendList(models.Model):
 
-    user = models.OneToOneField(settings.Auth_USER_MODEL, on_delete=models.CASCADE, related_name="user")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
 
-    friends = models.ManyToManyField(settings.Auth_USER_MODEL, blank=True,related_name="friends")
+    friends = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True,related_name="friends")
 
 
     def __str__(self):
