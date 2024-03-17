@@ -75,6 +75,15 @@
 					</div>
 
 					{% endif %}
+					{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+
+	
+    {% endfor %}
+</ul>
+{% endif %}
 
 					<div class="d-flex flex-column mt-4">
 						<button class="mt-4 btn btn-primary flex-grow-1" type="submit">Save</button>
