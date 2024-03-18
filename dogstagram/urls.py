@@ -14,12 +14,12 @@ from accounts.views import (
     )
 
 
-
 urlpatterns = [
 
     path('',  index,name="index"),
     path('account/',include('accounts.urls',namespace='accounts')),
-    path('admin/', admin.site.urls),   
+    path('admin/', admin.site.urls),  
+    path('friend/',include('friend.urls',namespace='friend')),
     path("login/",login_view,name = 'login'),
     path("logout/",logout_view,name = 'logout'),
     path("register/",register_view,name = 'register'),
