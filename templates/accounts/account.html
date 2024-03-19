@@ -226,7 +226,7 @@
 	var cancelFriendRequestBtn = document.getElementById("id_cancel_friend_request_btn")
 	if(cancelFriendRequestBtn != null){
 		cancelFriendRequestBtn.addEventListener("click", function(){
-			//cancelFriendRequest("{{id}}", onFriendRequestCancelled)
+			cancelFriendRequest("{{id}}", onFriendRequestCancelled)
 		})
 	}
 
@@ -250,7 +250,7 @@
 {% include 'friend/send_friend_request.html' %}
 {% include 'friend/accept_friend_request.html' %}
 {% include 'friend/decline_friend_request.html' %}
-{#% include 'friend/cancel_friend_request.html' %#}
+{% include 'friend/cancel_friend_request.html' %}
 {% include 'friend/remove_friend.html' %}
 
 
